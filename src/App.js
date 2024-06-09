@@ -3,7 +3,7 @@ import './App.css';
 
 import React, { Component } from 'react'
 import NavBar from './components/NavBar';
-import NewsItem from './components/NewsItem';
+import News from './components/News';
 
 export default class App extends Component {
   render() {
@@ -11,12 +11,8 @@ export default class App extends Component {
       <div>
         <NavBar/>
         <div className='container'>
-          <div className='row'>
-            <NewsItem/>
-            <NewsItem/>
-            <NewsItem/>
-            <NewsItem/>
-          </div>
+          <h2>Top-Headlines</h2>
+          <News/>
         </div>       
       </div>
     )
