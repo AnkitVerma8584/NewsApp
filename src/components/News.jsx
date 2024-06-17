@@ -1,28 +1,41 @@
 import React, { Component } from 'react'
 import NewsItem from '../components/NewsItem';
+import { Col, Row } from 'react-bootstrap';
 
 export default class News extends Component {
-  
+
   constructor(){
     super();
-    this.state = {articles:[]};
+    this.state = {articles:[],loading:true};
   }
 
   async componentDidMount(){
-    let url = "https://newsapi.org/v2/top-headlines?country=in&apiKey=2555409d03f842ce97b30b47e530400e";
+    let url = process.env.REACT_APP_BASE_URL_EVERYTHING;
     let data = await fetch(url);
     let parsedData = await data.json();
-    console.log(parsedData);
-    this.setState({articles:parsedData.articles});
+    this.setState(
+      {articles:parsedData.articles.filter((elem)=>elem.title!='[Removed]' && elem.urlToImage!=null),
+        loading:false}
+    );
   }
 
   render() {
     return (
-        <div className='row'>  
+      <>
+        {
+          this.state.loading?<div className="spinner-border" role="status">
+          <span className="visually-hidden">Loading...</span>
+        </div> :
+        <Row>  
             {this.state.articles.map((elem)=>{
-              return <NewsItem title={elem.title} description={elem.description} url={elem.url} image={elem.urlToImage}/>
-            })}         
-        </div>
+              return (
+                <Col md={6} lg={4} key={elem.title} >
+                  <NewsItem title={elem.title} description={elem.description} url={elem.url} image={elem.urlToImage}/>
+                </Col>
+              );
+              })}         
+        </Row>}
+      </>
     )
   }
 }
