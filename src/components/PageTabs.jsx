@@ -1,16 +1,17 @@
 import React, { Component } from 'react'
+import { Pagination } from 'react-bootstrap';
 
 export default class PageTabs extends Component {
 
     constructor(){
+        super();
         this.state = {
-            startIndex : 1 
+            startIndex : 0
         }
     }
 
   render() {
-    let {totalResults, currentIndex , onTabClick} = this.props;
-    let totalPages = totalResults/100;
+    let {totalPages, activeIndex , onTabClick} = this.props;
 
     // Needs to be sliced
     let items = []; 
@@ -18,26 +19,59 @@ export default class PageTabs extends Component {
       items.push(
         <Pagination.Item 
           key={number} 
-          active={number === currentIndex} 
-          onClick={onTabClick}>
+          active={number === activeIndex} 
+          onClick={()=>onTabClick(number)}>
           {number}
         </Pagination.Item>
       );
     }
 
-    let tabsToShow = items.slice(this.state.startIndex , this.state.startIndex+10);
+    
+    let endIndex =  items.length - this.state.startIndex > 10 ? this.state.startIndex + 10 : items.length ;
+
+    let tabsToShow = items.slice(this.state.startIndex , endIndex );
+    console.log('start : ',this.state.startIndex, ', end : ',endIndex);
+    console.log('length : ',items.length, ', totpage : ',totalPages);
+    const previous = ()=>{
+      let current = this.state.startIndex;
+      if(current!==0)
+        this.setState({startIndex : current - 10})
+    }
+
+    const next = ()=>{
+      if(items.length - this.state.startIndex > 10)
+        this.setState({startIndex : this.state.startIndex+10})
+    }
 
     return (
     <Pagination>
-        <Pagination.First onClick={()=>{ this.setState({startIndex : 1}) }}/>
-        <Pagination.Prev onClick={()=>{ this.setState({startIndex : this.state.startIndex-10}) }}/>
+        {
+          this.state.startIndex!==0 ?
+            <><Pagination.First onClick={()=>{
+              this.setState({startIndex : 0});
+            }
+              }/>
+            <Pagination.Prev onClick={previous}/>
+            <Pagination.Ellipsis /></>
+          : <></>
+        }
         
-        <Pagination.Ellipsis />
-        <Pagination.Item>{tabsToShow}</Pagination.Item>
-        <Pagination.Ellipsis />
+        {tabsToShow}
+
+        { 
+            endIndex != items.length ? 
+            <>
+              <Pagination.Ellipsis />
+              <Pagination.Next onClick={next}/>
+              <Pagination.Last onClick={()=>{ 
+                  this.setState({startIndex : 
+                    items.length%10===0 ? totalPages - 10 : totalPages - (totalPages%10)
+                  }) 
+                }}/>
+            </>:<></>
+
+        }
         
-        <Pagination.Next onClick={()=>{ this.setState({startIndex : this.state.startIndex+10}) }}/>
-        <Pagination.Last onClick={()=>{ this.setState({startIndex : totalPages-10}) }}/>
     </Pagination>
     )
   }

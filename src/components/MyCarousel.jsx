@@ -13,7 +13,6 @@ export default class MyCarousel extends Component {
         let url = process.env.REACT_APP_BASE_URL;
         let data = await fetch(url);
         let parsedData = await data.json();
-        console.log(parsedData);
         this.setState({articles:parsedData.articles});
     }
 
@@ -22,7 +21,6 @@ export default class MyCarousel extends Component {
         <Carousel>
             {
             this.state.articles.filter((element) => element.urlToImage!=null).map((elem)=>{
-                console.log(elem);
                 return (
                     <Carousel.Item key={elem.title}>
                         <Image src={elem.urlToImage} className='w-100' height={500}/>

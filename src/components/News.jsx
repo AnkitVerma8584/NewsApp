@@ -1,6 +1,7 @@
 import React, { Component } from 'react'
 import NewsItem from '../components/NewsItem';
-import { Col, Pagination, Row, Stack } from 'react-bootstrap';
+import { Col, Row, Stack } from 'react-bootstrap';
+import PageTabs from './PageTabs';
 
 export default class News extends Component {
 
@@ -10,38 +11,57 @@ export default class News extends Component {
   }
 
   async componentDidMount(){
-    let url = process.env.REACT_APP_BASE_URL_EVERYTHING;
-    let data = await fetch(url);
-    let parsedData = await data.json();
-  
-    this.setState(
-      { articles:parsedData.articles.filter((elem)=>elem.title!='[Removed]' && elem.urlToImage!=null),
-        currentPage:1,
-        totalPage: Math.ceil(parsedData.totalResults/100),
-        loading:false}
-    );
+
+    let result = await this.getArticles();
+
+    if(result.status === 'ok'){
+      this.setState(
+        { articles: result.articles.filter((elem)=>elem.title!='[Removed]' && elem.urlToImage!=null),
+          currentPage:1,
+          totalPage: Math.ceil(result.totalResults/100),
+          loading:false}
+      );
+    }else{
+      //TODO Show error
+    }
+
+    
   }
 
-  onPageChange = (num)=>{
-    if(num != this.state.currentPage){
-          this.setState({
-            ...this.state,
-            currentPage:num
-          });
-        }
+  async getArticles(page = 1){
+    let url = process.env.REACT_APP_BASE_URL_EVERYTHING + `&page=${page}`;
+    let data = await fetch(url);
+    let parsedData = await data.json();
+    return parsedData;
   }
   
   render() {
-    let items = [];
-    for (let number = 1; number <= 8; number++) { //this.state.totalPage
-      items.push(
-        <Pagination.Item 
-          key={number} 
-          active={number === this.state.currentPage} 
-          onClick={()=>this.onPageChange(number)}>
-          {number}
-        </Pagination.Item>
+    function Center({ children }) {
+      return (
+          <div style={{
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+          }}>
+              {children}
+          </div>
       );
+    }
+    const onPageChange = async (num)=>{
+      if(num != this.state.currentPage){
+            let result = await this.getArticles(num);
+            console.log(result);
+            if(result.status === 'ok'){
+              this.setState({
+                articles: result.articles.filter((elem)=>elem.title!='[Removed]' && elem.urlToImage!=null),
+                loading:false,
+                currentPage:num,
+                totalPage: Math.ceil(result.totalResults/100)
+              });
+            }else{
+              //TODO Show error
+            }
+          }
     }
     return (
       <>
@@ -59,18 +79,11 @@ export default class News extends Component {
                   );
                   })}         
             </Row>
-            <Pagination>
-              <Pagination.First/>
-              <Pagination.Prev />
-              <Pagination.Item>{1}</Pagination.Item>
-              <Pagination.Ellipsis />
-                {items}
-              <Pagination.Ellipsis />
-              <Pagination.Item>{20}</Pagination.Item>
-              <Pagination.Next />
-              <Pagination.Last />
-            </Pagination>
-          </Stack>
+            <Center>
+            <PageTabs totalPages={this.state.totalPage} activeIndex={this.state.currentPage} onTabClick={onPageChange}/>
+          
+            </Center>
+            </Stack>
         }
       </>
     )
