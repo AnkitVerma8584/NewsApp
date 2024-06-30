@@ -17,6 +17,12 @@ export default class MyCarousel extends Component {
     }
 
   render() {
+
+    // let myGradient = {
+    //     background: 'red',
+    //     height:'250px',
+    // }
+
     return (
         <Carousel>
             {
@@ -24,6 +30,7 @@ export default class MyCarousel extends Component {
                 return (
                     <Carousel.Item key={elem.title}>
                         <Image src={elem.urlToImage} className='w-100' height={500}/>
+                        <div className='w-100'></div>
                         <Carousel.Caption>
                             <h3>{elem.title}</h3>
                             <p>{elem.description}</p>

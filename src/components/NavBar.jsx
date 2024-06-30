@@ -11,8 +11,8 @@ export class NavBar extends Component {
             <Navbar.Toggle aria-controls="basic-navbar-nav" />
             <Navbar.Collapse id="basic-navbar-nav">
             <Nav className="me-auto">
-                <Nav.Link href="#home" active={true}>Home</Nav.Link>
-                <Nav.Link href="#link">Link</Nav.Link>
+                <Nav.Link href="/" active={true}>Home</Nav.Link>
+                <Nav.Link href="/">About Us</Nav.Link>
             </Nav>
             </Navbar.Collapse>
         </Container>

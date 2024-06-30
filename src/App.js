@@ -1,6 +1,5 @@
 
 import './App.css';
-
 import React, { Component } from 'react'
 import NavBar from './components/NavBar';
 import News from './components/News';
@@ -12,9 +11,10 @@ export default class App extends Component {
     return (
       <div>
         <NavBar/>
-        <MyCarousel/>
+        <MyCarousel/> 
+
         <Container>
-          <h2>Top-Headlines</h2>
+          <h3 className='my-4'>Today's Special</h3>
           <News/>
         </Container>    
       </div>
